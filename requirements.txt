@@ -1,0 +1,7 @@
+neo4j
+toml
+pandas
+streamlit 
+langchain 
+langchain-openai 
+langchain_community

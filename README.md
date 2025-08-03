@@ -1,86 +1,95 @@
-# LangChain-Powered Graph RAG Chatbot
+# ⚽ LangChain-Powered Graph RAG Chatbot
 
-Install the driver
+An intelligent chatbot that understands football like a fan and reasons like a graph. Built with LangChain, Neo4j AuraDB, and Streamlit.
+
+---
+
+## 🚀 Quick Start
+
+Install the dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
 
-Create a file `.streamlit/secrets.toml` to keep secret
+Create a `.streamlit/secrets.toml` file to store our Neo4j Aura credentials:
 
-Designing Graph Schema (Nodes + Relationships)
-This is the most important part: turning our CSV columns into graph shapes.
+```toml
+NEO4J_URI = "neo4j+s://<your-instance>.databases.neo4j.io"
+NEO4J_USER = "<your-username>"
+NEO4J_PASSWORD = "<your-password>"
+OPENROUTER_API_KEY = "your-api-key"
+```
 
+---
 
-## 🎯 Goal-Driven Graph Design
+## 🧠 Our Goal: A RAG Chatbot That Knows Football
 
-Our chatbot needs to:
+We designed this system to:
 
-* Answer flexible questions like:
+* Answer natural questions like:
 
   * “Who scored for Nigeria in 2013?”
+  * “Which World Cup finals ended in shootouts?”
   * “What was the result of Brazil vs Argentina in 2004?”
-  * “Which matches went to penalties?”
-* Support **semantic search** (via LangChain RAG) and **precise Cypher queries**
+* Use LangChain's **Graph RAG pipeline**: Cypher → context → LLM → answer
+* Combine symbolic reasoning (graph) with semantic reasoning (LLM)
 
 ---
 
-## 🧱 Graph Schema:
+## 🧱 Our Graph Schema
 
-#### 🟦 Nodes
+We built a clean, fast, and queryable schema based on football match data:
 
-* `(:Team {name})`
-* `(:Player {name})`
-* `(:Match {date, home_score, away_score, tournament, city, country, neutral})`
+### 🟦 Nodes
 
-#### 🔗 Relationships
+| Label     | Description                 |
+| --------- | --------------------------- |
+| `:Team`   | Football teams              |
+| `:Player` | Goal scorers                |
+| `:Match`  | Individual football matches |
 
-* `(Team)-[:PLAYED_HOME]->(Match)`
-* `(Team)-[:PLAYED_AWAY]->(Match)`
-* `(Player)-[:SCORED_IN {minute, own_goal, penalty}]->(Match)`
-* `(Player)-[:SCORED_FOR]->(Team)`
-* `(Team)-[:WON_SHOOTOUT]->(Match)`
-* `(Team)-[:FIRST_SHOOTER_IN]->(Match)`
+Match node properties include:
 
----
-
-### ✅ Why This Schema Works for Our Chatbot
-
-* Keeps things clean and fast to query
-* Makes natural Cypher questions easier (ex: “Who scored in Nigeria’s 2-1 win over Ghana?”)
-* Fits LangChain GraphRAG pipelines well (graph → retriever → context → LLM)
+* `date`, `home_score`, `away_score`, `tournament`, `city`, `country`, `neutral`
 
 ---
 
-### 🟦 `:Team {name}`
+### 🔗 Relationships
 
-* Comes from **`results.csv`**, **`goalscorers.csv`**, and **`shootouts.csv`**
-* You’ll extract team names from:
+| Relationship                            | Meaning                          |
+| --------------------------------------- | -------------------------------- |
+| `(:Team)-[:PLAYED_HOME]->(:Match)`      | Home team                        |
+| `(:Team)-[:PLAYED_AWAY]->(:Match)`      | Away team                        |
+| `(:Player)-[:SCORED_FOR]->(:Team)`      | Who the player scored for        |
+| `(:Player)-[:SCORED_IN]->(:Match)`      | Which match the goal happened in |
+| `(:Team)-[:WON_SHOOTOUT]->(:Match)`     | Team won the shootout            |
+| `(:Team)-[:FIRST_SHOOTER_IN]->(:Match)` | Team kicked first in shootout    |
 
-  * `results.csv`:
-
-    * `home_team`
-    * `away_team`
-  * `goalscorers.csv`:
-
-    * `team`
-  * `shootouts.csv`:
-
-    * `home_team`
-    * `away_team`
-    * `winner`
-    * `first_shooter`
-
-So you’ll collect all unique team names from those columns to create `(:Team {name})` nodes.
+All relationships are meaningful to end-users — optimized for chat queries.
 
 ---
 
-### 🟨 `:Player {name}`
+## 🗂️ Our Data Sources
 
-* Comes only from **`goalscorers.csv`**
-* You’ll extract player names from:
+We used three Kaggle CSVs:
 
-  * `scorer` column
+| File              | Description                     |
+| ----------------- | ------------------------------- |
+| `results.csv`     | Full-time match results         |
+| `goalscorers.csv` | Player-level goal data          |
+| `shootouts.csv`   | Matches that ended in penalties |
 
-### `(:Match {date, home_score, away_score, tournament, city, country, neutral})`
-* Comes only from `results.csv`
-* Properties from all columns
+---
+
+## 🔍 Design Choices That Make It Work
+
+* 🧠 Goal-driven schema — designed backwards from real questions
+* ⚡ Fast ingestion — batches 100k+ relationships smoothly
+* ✅ RAG-ready — fits LangChain’s GraphCypherQAChain pipeline
+* 🤝 Graph-first design — fits LangChain's Graph Cypher QA chain perfectly
+
+---
+
+✅ Deployed on Streamlit Cloud for easy public access.
+📬 Questions? Ideas? Reach out on LinkedIn and let’s connect!

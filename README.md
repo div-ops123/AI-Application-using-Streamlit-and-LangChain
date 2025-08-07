@@ -21,6 +21,11 @@ NEO4J_PASSWORD = "<your-password>"
 OPENROUTER_API_KEY = "your-api-key"
 ```
 
+Run:
+```bash
+streamlit run app.py
+```
+
 ---
 
 ## 🧠 Our Goal: A RAG Chatbot That Knows Football
@@ -90,6 +95,3 @@ We used three Kaggle CSVs:
 * 🤝 Graph-first design — fits LangChain's Graph Cypher QA chain perfectly
 
 ---
-
-✅ Deployed on Streamlit Cloud for easy public access.
-📬 Questions? Ideas? Reach out on LinkedIn and let’s connect!
